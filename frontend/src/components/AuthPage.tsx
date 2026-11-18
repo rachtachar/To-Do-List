@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
-import { CheckSquare, Lock, Mail, User as UserIcon, Loader2 } from 'lucide-react';
+import { CheckSquare, Lock, Mail, User as UserIcon, Loader2, Sparkles } from 'lucide-react';
 
 export const AuthPage: React.FC = () => {
     const { login } = useAuth();
@@ -33,6 +33,26 @@ export const AuthPage: React.FC = () => {
                 setError(err.response?.data?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
             } else {
                 setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleQuickLogin = async (demoEmail: string, demoPass: string) => {
+        setEmail(demoEmail);
+        setPassword(demoPass);
+        setError('');
+        setLoading(true);
+
+        try {
+            const res = await api.post('/auth/login', { email: demoEmail, password: demoPass });
+            login(res.data.token, res.data.user);
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบทดสอบ');
+            } else {
+                setError('เกิดข้อผิดพลาดในการเข้าสู่ระบบทดสอบ');
             }
         } finally {
             setLoading(false);
@@ -124,7 +144,7 @@ export const AuthPage: React.FC = () => {
                 </form>
 
                 {/* สลับไป-มาระหว่าง Login และ Register */}
-                <div className="mt-6 text-center text-xs text-slate-500">
+                <div className="mt-5 text-center text-xs text-slate-500">
                     {isLogin ? 'ยังไม่มีบัญชีใช่หรือไม่?' : 'มีบัญชีอยู่แล้ว?'}{' '}
                     <button
                         type="button"
@@ -136,6 +156,50 @@ export const AuthPage: React.FC = () => {
                     >
                         {isLogin ? 'สมัครสมาชิกที่นี่' : 'เข้าสู่ระบบ'}
                     </button>
+                </div>
+
+                {/* Quick Demo Login สำหรับกรรมการ / ผู้ทดสอบ */}
+                <div className="mt-6 pt-5 border-t border-slate-100">
+                    <div className="flex items-center justify-center gap-1.5 mb-3 text-slate-600">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="text-xs font-bold">Quick Demo Login (คลิกเดียวเข้าทดสอบได้ทันที)</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                        <button
+                            type="button"
+                            onClick={() => handleQuickLogin('alex@example.com', 'password123')}
+                            disabled={loading}
+                            className="p-2.5 bg-indigo-50/80 hover:bg-indigo-100/90 border border-indigo-100 rounded-xl text-left transition group disabled:opacity-50 cursor-pointer"
+                        >
+                            <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                    A
+                                </div>
+                                <div className="overflow-hidden">
+                                    <p className="text-xs font-bold text-indigo-950 truncate">Alex (เจ้าของงาน)</p>
+                                    <p className="text-[10px] text-indigo-600 font-medium truncate">มีสถิติ & งาน Overdue</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleQuickLogin('sarah@example.com', 'password123')}
+                            disabled={loading}
+                            className="p-2.5 bg-emerald-50/80 hover:bg-emerald-100/90 border border-emerald-100 rounded-xl text-left transition group disabled:opacity-50 cursor-pointer"
+                        >
+                            <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                    S
+                                </div>
+                                <div className="overflow-hidden">
+                                    <p className="text-xs font-bold text-emerald-950 truncate">Sarah (ผู้ร่วมงาน)</p>
+                                    <p className="text-[10px] text-emerald-600 font-medium truncate">เทสดูงานที่ถูกแท็ก</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
