@@ -3,11 +3,11 @@ import { AuthRequest } from '../middlewares/auth.middleware';
 import prisma from '../config/db';
 import { TaskStatus, Priority } from '@prisma/client';
 
-// 1. ดึงรายการงานทั้งหมด (รองรับ Search, Filter และแยกงานตัวเอง/งานที่ถูกแท็ก)
+// 1. ดึงรายการงานทั้งหมด (รองรับ Search, Filter, Sort กำหนดเวลาส่งก่อน/หลัง)
 export const getTasks = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { search, status, categoryId, priority, filterType } = req.query;
+    const { search, status, categoryId, priority, filterType, sortBy, dueFilter } = req.query;
 
     // เงื่อนไขค้นหาข้อความ
     const searchCondition = search
@@ -33,6 +33,26 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
       ownershipCondition = { collaborators: { some: { userId } } };
     }
 
+    // เงื่อนไขกรองตามช่วงเวลากำหนดส่ง (Due Date Filter)
+    const now = new Date();
+    let dueCondition: any = {};
+    if (dueFilter === 'overdue') {
+      dueCondition = { dueDate: { lt: now }, status: { not: TaskStatus.DONE } };
+    } else if (dueFilter === 'next_7_days') {
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      dueCondition = { dueDate: { gte: now, lte: nextWeek } };
+    }
+
+    // การเรียงลำดับ (Sorting: ส่งก่อน / ส่งหลัง / วันที่สร้าง)
+    let orderBy: any = { createdAt: 'desc' };
+    if (sortBy === 'dueDate_asc') {
+      orderBy = { dueDate: { sort: 'asc', nulls: 'last' } };
+    } else if (sortBy === 'dueDate_desc') {
+      orderBy = { dueDate: { sort: 'desc', nulls: 'last' } };
+    } else if (sortBy === 'createdAt_asc') {
+      orderBy = { createdAt: 'asc' };
+    }
+
     const tasks = await prisma.task.findMany({
       where: {
         AND: [
@@ -41,6 +61,7 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
           categoryId ? { categoryId: String(categoryId) } : {},
           priority ? { priority: priority as Priority } : {},
           searchCondition,
+          dueCondition,
         ],
       },
       include: {
@@ -52,7 +73,7 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy,
     });
 
     return res.json({ tasks });

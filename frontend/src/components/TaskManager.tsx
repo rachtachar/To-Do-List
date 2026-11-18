@@ -28,6 +28,8 @@ export const TaskManager: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'created_by_me' | 'tagged_to_me'>('all');
+  const [sortBy, setSortBy] = useState<'createdAt_desc' | 'dueDate_asc' | 'dueDate_desc'>('createdAt_desc');
+  const [dueFilter, setDueFilter] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,6 +58,8 @@ export const TaskManager: React.FC = () => {
       if (selectedStatus) params.status = selectedStatus;
       if (selectedPriority) params.priority = selectedPriority;
       if (filterType !== 'all') params.filterType = filterType;
+      if (sortBy) params.sortBy = sortBy;
+      if (dueFilter) params.dueFilter = dueFilter;
 
       const res = await api.get('/tasks', { params });
       setTasks(res.data.tasks);
@@ -64,7 +68,7 @@ export const TaskManager: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [search, selectedCategory, selectedStatus, selectedPriority, filterType]);
+  }, [search, selectedCategory, selectedStatus, selectedPriority, filterType, sortBy, dueFilter]);
 
   useEffect(() => {
     fetchCategories();
@@ -259,7 +263,30 @@ export const TaskManager: React.FC = () => {
             <option value="HIGH">สูง (High)</option>
           </select>
 
-          {(search || selectedCategory || selectedStatus || selectedPriority || filterType !== 'all') && (
+          {/* Due Date Filter */}
+          <select
+            value={dueFilter}
+            onChange={(e) => setDueFilter(e.target.value)}
+            className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 focus:outline-none"
+          >
+            <option value="">ทุกช่วงเวลา</option>
+            <option value="overdue">⚠️ เกินกำหนดส่ง (Overdue)</option>
+            <option value="next_7_days">📅 ส่งเร็วๆ นี้ (ภายใน 7 วัน)</option>
+          </select>
+
+          {/* Sort By Dropdown (เรียงตามกำหนดเวลา ส่งก่อน vs ส่งหลัง) */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="px-2.5 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold rounded-lg focus:outline-none cursor-pointer"
+            title="เรียงลำดับรายการงาน"
+          >
+            <option value="createdAt_desc">🆕 สร้างล่าสุด</option>
+            <option value="dueDate_asc">⏱️ ต้องส่งก่อน (ใกล้กำหนดที่สุด)</option>
+            <option value="dueDate_desc">📅 ต้องส่งหลัง (กำหนดไกลสุด)</option>
+          </select>
+
+          {(search || selectedCategory || selectedStatus || selectedPriority || filterType !== 'all' || dueFilter || sortBy !== 'createdAt_desc') && (
             <button
               onClick={() => {
                 setSearch('');
@@ -267,6 +294,8 @@ export const TaskManager: React.FC = () => {
                 setSelectedStatus('');
                 setSelectedPriority('');
                 setFilterType('all');
+                setDueFilter('');
+                setSortBy('createdAt_desc');
               }}
               className="text-xs text-indigo-600 hover:underline ml-auto"
             >
