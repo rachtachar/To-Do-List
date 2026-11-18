@@ -177,7 +177,7 @@ export const AuthPage: React.FC = () => {
                                     A
                                 </div>
                                 <div className="overflow-hidden">
-                                    <p className="text-xs font-bold text-indigo-950 truncate">Alex (เจ้าของงาน)</p>
+                                    <p className="text-xs font-bold text-indigo-950 truncate">Alex</p>
                                     <p className="text-[10px] text-indigo-600 font-medium truncate">มีสถิติ & งาน Overdue</p>
                                 </div>
                             </div>
@@ -194,7 +194,7 @@ export const AuthPage: React.FC = () => {
                                     S
                                 </div>
                                 <div className="overflow-hidden">
-                                    <p className="text-xs font-bold text-emerald-950 truncate">Sarah (ผู้ร่วมงาน)</p>
+                                    <p className="text-xs font-bold text-emerald-950 truncate">Sarah</p>
                                     <p className="text-[10px] text-emerald-600 font-medium truncate">เทสดูงานที่ถูกแท็ก</p>
                                 </div>
                             </div>
