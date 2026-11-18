@@ -293,10 +293,18 @@ export const TaskManager: React.FC = () => {
             const overdue = isOverdue(task.dueDate, task.status);
             const isCreator = task.creatorId === user?.id;
 
+            // กำหนดสีของ Card ตามสถานะของงาน
+            const cardBgStyle = 
+              task.status === 'DONE'
+                ? 'bg-emerald-50/90 border-emerald-200/80 shadow-emerald-100/40'
+                : task.status === 'IN_PROGRESS'
+                ? 'bg-amber-50/90 border-amber-200/80 shadow-amber-100/40'
+                : 'bg-white border-slate-200/80 shadow-slate-100/40';
+
             return (
               <div
                 key={task.id}
-                className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                className={`${cardBgStyle} rounded-2xl p-5 border shadow-sm hover:shadow-md transition flex flex-col justify-between`}
               >
                 <div>
                   {/* Category & Priority Badge */}
@@ -325,11 +333,11 @@ export const TaskManager: React.FC = () => {
                     <select
                       value={task.status}
                       onChange={(e) => handleStatusChange(task.id, e.target.value as TaskStatus)}
-                      className={`text-xs font-semibold px-2 py-0.5 rounded-lg border focus:outline-none cursor-pointer ${
+                      className={`text-xs font-semibold px-2 py-0.5 rounded-lg border focus:outline-none cursor-pointer transition ${
                         task.status === 'DONE'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          ? 'bg-emerald-100/80 text-emerald-800 border-emerald-300'
                           : task.status === 'IN_PROGRESS'
-                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          ? 'bg-amber-100/80 text-amber-800 border-amber-300'
                           : 'bg-slate-100 text-slate-700 border-slate-200'
                       }`}
                     >
@@ -355,7 +363,7 @@ export const TaskManager: React.FC = () => {
                 </div>
 
                 {/* Footer Info */}
-                <div className="mt-4 pt-3 border-t border-slate-50 space-y-2">
+                <div className="mt-4 pt-3 border-t border-slate-200/60 space-y-2">
                   {/* Due Date & Overdue Warning */}
                   {task.dueDate && (
                     <div className={`flex items-center gap-1.5 text-xs ${
