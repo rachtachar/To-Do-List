@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// สถานะของงาน
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+// ระดับความสำคัญ
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// 1. ผู้ใช้งาน
+model User {
+  id           String             @id @default(uuid())
+  email        String             @unique
+  password     String
+  name         String
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  // งานที่ตัวเองเป็นผู้สร้าง (Owner)
+  createdTasks Task[]             @relation("TaskCreator")
+
+  // หมวดหมู่ที่ตัวเองสร้าง
+  categories   Category[]
+
+  // งานที่ตัวเองถูกแท็กให้มีส่วนเกี่ยวข้อง (Collaborator)
+  collaborations TaskCollaborator[]
+
+  @@map("users")
+}
+
+// 2. หมวดหมู่ของงาน
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  color     String   @default("#3B82F6") // เก็บโค้ดสี Hex เช่น #EF4444 เอาไว้โชว์ Badge สวยๆ
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
+// 3. รายการงาน (Task)
+model Task {
+  id          String             @id @default(uuid())
+  title       String
+  description String?            @db.Text
+  status      TaskStatus         @default(TODO)
+  priority    Priority           @default(MEDIUM)
+  dueDate     DateTime?          // กำหนดเวลาส่ง (ใช้ตรวจจับ Overdue ได้)
+  
+  // เจ้าของงาน
+  creatorId   String
+  creator     User               @relation("TaskCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // หมวดหมู่ (ลบหมวดหมู่งานไม่หาย แค่กลายเป็น null)
+  categoryId  String?
+  category    Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  // รายชื่อคนที่ถูกแท็กในงานนี้ (Many-to-Many)
+  collaborators TaskCollaborator[]
+
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@map("tasks")
+}
+
+// 4. ตารางเชื่อมการแท็กผู้เกี่ยวข้อง (Task <-> User)
+model TaskCollaborator {
+  taskId   String
+  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taggedAt DateTime @default(now())
+
+  @@id([taskId, userId])
+  @@map("task_collaborators")
+}

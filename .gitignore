@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Production Build outputs
+dist/
+build/
+
+# Environment Variables (ห้าม commit ข้อมูลความลับ)
+.env
+.env.local
+.env.*.local
+
+# Database / Prisma
+generated/
+
+# Logs
+*.log
+npm-debug.log*
+
+# AI Agent temporary folders
+.agents/
+.claude/
+.cursor/
+.devin/
+text.txt
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
