@@ -3,16 +3,16 @@ import api from '../api/client';
 import type { Task, Category, TaskStatus } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { TaskModal } from './TaskModal';
-import { 
-  Plus, 
-  Search, 
-  Clock, 
-  Calendar, 
-  Trash2, 
-  Edit3, 
+import {
+  Plus,
+  Search,
+  Clock,
+  Calendar,
+  Trash2,
+  Edit3,
   AlertCircle,
   Users,
-  Loader2 
+  Loader2
 } from 'lucide-react';
 
 export const TaskManager: React.FC = () => {
@@ -142,25 +142,22 @@ export const TaskManager: React.FC = () => {
           <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
             <button
               onClick={() => setFilterType('all')}
-              className={`px-3 py-1 rounded-md font-medium transition ${
-                filterType === 'all' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1 rounded-md font-medium transition ${filterType === 'all' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               ทั้งหมด
             </button>
             <button
               onClick={() => setFilterType('created_by_me')}
-              className={`px-3 py-1 rounded-md font-medium transition ${
-                filterType === 'created_by_me' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1 rounded-md font-medium transition ${filterType === 'created_by_me' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
-              งานของฉัน
+              งานที่สร้างเอง
             </button>
             <button
               onClick={() => setFilterType('tagged_to_me')}
-              className={`px-3 py-1 rounded-md font-medium transition ${
-                filterType === 'tagged_to_me' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`px-3 py-1 rounded-md font-medium transition ${filterType === 'tagged_to_me' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               งานที่ถูกแท็ก
             </button>
@@ -262,12 +259,12 @@ export const TaskManager: React.FC = () => {
             const isCreator = task.creatorId === user?.id;
 
             // กำหนดสีของ Card ตามสถานะของงาน
-            const cardBgStyle = 
+            const cardBgStyle =
               task.status === 'DONE'
                 ? 'bg-emerald-50/90 border-emerald-200/80 shadow-emerald-100/40'
                 : task.status === 'IN_PROGRESS'
-                ? 'bg-amber-50/90 border-amber-200/80 shadow-amber-100/40'
-                : 'bg-white border-slate-200/80 shadow-slate-100/40';
+                  ? 'bg-amber-50/90 border-amber-200/80 shadow-amber-100/40'
+                  : 'bg-white border-slate-200/80 shadow-slate-100/40';
 
             return (
               <div
@@ -286,13 +283,12 @@ export const TaskManager: React.FC = () => {
                           {task.category.name}
                         </span>
                       )}
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
-                        task.priority === 'HIGH'
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${task.priority === 'HIGH'
                           ? 'bg-red-50 text-red-600 border border-red-100'
                           : task.priority === 'MEDIUM'
-                          ? 'bg-amber-50 text-amber-600 border border-amber-100'
-                          : 'bg-slate-50 text-slate-500 border border-slate-200'
-                      }`}>
+                            ? 'bg-amber-50 text-amber-600 border border-amber-100'
+                            : 'bg-slate-50 text-slate-500 border border-slate-200'
+                        }`}>
                         {task.priority}
                       </span>
                     </div>
@@ -301,13 +297,12 @@ export const TaskManager: React.FC = () => {
                     <select
                       value={task.status}
                       onChange={(e) => handleStatusChange(task.id, e.target.value as TaskStatus)}
-                      className={`text-xs font-semibold px-2 py-0.5 rounded-lg border focus:outline-none cursor-pointer transition ${
-                        task.status === 'DONE'
+                      className={`text-xs font-semibold px-2 py-0.5 rounded-lg border focus:outline-none cursor-pointer transition ${task.status === 'DONE'
                           ? 'bg-emerald-100/80 text-emerald-800 border-emerald-300'
                           : task.status === 'IN_PROGRESS'
-                          ? 'bg-amber-100/80 text-amber-800 border-amber-300'
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
-                      }`}
+                            ? 'bg-amber-100/80 text-amber-800 border-amber-300'
+                            : 'bg-slate-100 text-slate-700 border-slate-200'
+                        }`}
                     >
                       <option value="TODO">To Do</option>
                       <option value="IN_PROGRESS">In Progress</option>
@@ -316,9 +311,8 @@ export const TaskManager: React.FC = () => {
                   </div>
 
                   {/* Task Title */}
-                  <h3 className={`text-sm font-bold text-slate-800 ${
-                    task.status === 'DONE' ? 'line-through text-slate-400' : ''
-                  }`}>
+                  <h3 className={`text-sm font-bold text-slate-800 ${task.status === 'DONE' ? 'line-through text-slate-400' : ''
+                    }`}>
                     {task.title}
                   </h3>
 
@@ -334,9 +328,8 @@ export const TaskManager: React.FC = () => {
                 <div className="mt-4 pt-3 border-t border-slate-200/60 space-y-2">
                   {/* Due Date & Overdue Warning */}
                   {task.dueDate && (
-                    <div className={`flex items-center gap-1.5 text-xs ${
-                      overdue ? 'text-rose-600 font-semibold' : 'text-slate-500'
-                    }`}>
+                    <div className={`flex items-center gap-1.5 text-xs ${overdue ? 'text-rose-600 font-semibold' : 'text-slate-500'
+                      }`}>
                       {overdue ? (
                         <AlertCircle className="w-3.5 h-3.5" />
                       ) : (
