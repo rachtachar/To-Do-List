@@ -168,7 +168,7 @@ export const Dashboard: React.FC = () => {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="flex flex-col gap-2 pr-4">
+              <div className="flex flex-col gap-2 pr-4 shrink-0 whitespace-nowrap">
                 {statusPieData.map((item) => (
                   <div key={item.name} className="flex items-center gap-2 text-xs text-slate-600">
                     <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></span>

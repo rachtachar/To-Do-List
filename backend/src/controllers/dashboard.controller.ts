@@ -33,15 +33,27 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
       },
     });
 
-    // 3. งานแยกตามหมวดหมู่ (สำหรับเอาไปวาดกราฟ Donut/Bar Chart)
-    const categoriesWithCount = await prisma.category.findMany({
-      where: { userId },
-      select: {
-        id: true,
-        name: true,
-        color: true,
-        _count: { select: { tasks: true } },
-      },
+    // 3. งานแยกตามหมวดหมู่ (นับจากงานทั้งหมดที่ User มีสิทธิ์เข้าถึง ทั้งงานที่สร้างเองและงานที่ถูกแท็ก)
+    const [userCategories, allUserTasks] = await Promise.all([
+      prisma.category.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'asc' },
+      }),
+      prisma.task.findMany({
+        where: userTaskFilter,
+        include: { category: true },
+      }),
+    ]);
+
+    const tasksByCategory = userCategories.map((c) => {
+      const count = allUserTasks.filter(
+        (t) => t.category && t.category.name.toLowerCase() === c.name.toLowerCase()
+      ).length;
+      return {
+        name: c.name,
+        count,
+        color: c.color,
+      };
     });
 
     // 4. งาน 5 ชิ้นที่ใกล้ถึงกำหนดส่งมากที่สุด (Upcoming Deadlines)
@@ -64,11 +76,7 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
         todo: todoTasks,
         overdue: overdueTasks,
       },
-      tasksByCategory: categoriesWithCount.map((c) => ({
-        name: c.name,
-        count: c._count.tasks,
-        color: c.color,
-      })),
+      tasksByCategory,
       upcomingDeadlines: upcomingTasks,
     });
   } catch (error) {
