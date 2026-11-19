@@ -4,7 +4,6 @@ import { AuthPage } from './components/AuthPage';
 import { Dashboard } from './components/Dashboard';
 import { TaskManager } from './components/TaskManager';
 import {
-  CheckSquare,
   LayoutDashboard,
   ListTodo,
   LogOut,
@@ -35,9 +34,9 @@ const MainLayout: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-sm shadow-indigo-200">
+            {/* <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-sm shadow-indigo-200">
               <CheckSquare className="w-5 h-5" />
-            </div>
+            </div> */}
             <div>
               <h1 className="font-bold text-base text-slate-900 leading-tight">To-Do List</h1>
               <span className="text-[10px] text-slate-400 font-medium">To-Do List & Dashboard</span>
@@ -49,8 +48,8 @@ const MainLayout: React.FC = () => {
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === 'dashboard'
-                  ? 'bg-white text-indigo-600 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-indigo-600 shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -60,8 +59,8 @@ const MainLayout: React.FC = () => {
             <button
               onClick={() => setActiveTab('tasks')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${activeTab === 'tasks'
-                  ? 'bg-white text-indigo-600 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-indigo-600 shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
               <ListTodo className="w-4 h-4" />

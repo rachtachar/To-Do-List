@@ -19,26 +19,9 @@ export const getCategories = async (req: AuthRequest, res: Response) => {
 };
 
 export const createCategory = async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user!.id;
-    const { name, color } = req.body;
-
-    if (!name) {
-      return res.status(400).json({ message: 'Category name is required' });
-    }
-
-    const category = await prisma.category.create({
-      data: {
-        name,
-        color: color || '#3B82F6',
-        userId,
-      },
-    });
-
-    return res.status(201).json({ message: 'Category created successfully', category });
-  } catch (error) {
-    return res.status(500).json({ message: 'Error creating category', error });
-  }
+  return res.status(403).json({ 
+    message: 'Forbidden: ไม่อนุญาตให้สร้างหมวดหมู่ใหม่เอง ผู้ใช้ต้องเลือกใช้หมวดหมู่ระบบที่กำหนดไว้เท่านั้น' 
+  });
 };
 
 export const deleteCategory = async (req: AuthRequest, res: Response) => {

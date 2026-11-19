@@ -8,7 +8,6 @@ import {
   Search, 
   Clock, 
   Calendar, 
-  Tag, 
   Trash2, 
   Edit3, 
   AlertCircle,
@@ -34,11 +33,6 @@ export const TaskManager: React.FC = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
-
-  // Category creation inline
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryColor, setNewCategoryColor] = useState('#3B82F6');
-  const [showCategoryInput, setShowCategoryInput] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -100,19 +94,6 @@ export const TaskManager: React.FC = () => {
     }
   };
 
-  const handleCreateCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCategoryName.trim()) return;
-    try {
-      await api.post('/categories', { name: newCategoryName, color: newCategoryColor });
-      setNewCategoryName('');
-      setShowCategoryInput(false);
-      fetchCategories();
-    } catch (err) {
-      console.error('Failed to create category', err);
-    }
-  };
-
   const isOverdue = (dueDate?: string, status?: TaskStatus) => {
     if (!dueDate || status === 'DONE') return false;
     return new Date(dueDate).getTime() < Date.now();
@@ -129,14 +110,6 @@ export const TaskManager: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setShowCategoryInput(!showCategoryInput)}
-            className="px-3 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50 transition flex items-center gap-1.5 shadow-2xs"
-          >
-            <Tag className="w-3.5 h-3.5 text-indigo-600" />
-            + หมวดหมู่
-          </button>
-
-          <button
             onClick={() => {
               setTaskToEdit(null);
               setIsModalOpen(true);
@@ -148,40 +121,6 @@ export const TaskManager: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Inline Category Creator */}
-      {showCategoryInput && (
-        <form onSubmit={handleCreateCategory} className="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-3">
-          <input
-            type="text"
-            required
-            placeholder="ชื่อหมวดหมู่ใหม่..."
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-          <input
-            type="color"
-            value={newCategoryColor}
-            onChange={(e) => setNewCategoryColor(e.target.value)}
-            className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent"
-            title="เลือกสีหมวดหมู่"
-          />
-          <button
-            type="submit"
-            className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700"
-          >
-            บันทึก
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowCategoryInput(false)}
-            className="text-xs text-slate-400 hover:text-slate-600"
-          >
-            ยกเลิก
-          </button>
-        </form>
-      )}
 
       {/* 2. Search & Filters Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
