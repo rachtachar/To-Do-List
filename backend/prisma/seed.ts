@@ -22,9 +22,11 @@ async function main() {
       password: passwordHash,
       categories: {
         create: [
-          { name: 'Work', color: '#3B82F6' },
-          { name: 'Personal', color: '#10B981' },
-          { name: 'Urgent', color: '#EF4444' },
+          { name: 'UX/UI Design', color: '#8B5CF6' },
+          { name: 'Frontend Dev', color: '#3B82F6' },
+          { name: 'Backend & API', color: '#10B981' },
+          { name: 'QA & Testing', color: '#F59E0B' },
+          { name: 'DevOps & Deploy', color: '#EC4899' },
         ],
       },
     },
@@ -38,8 +40,11 @@ async function main() {
       password: passwordHash,
       categories: {
         create: [
-          { name: 'Design', color: '#8B5CF6' },
-          { name: 'Marketing', color: '#F59E0B' },
+          { name: 'UX/UI Design', color: '#8B5CF6' },
+          { name: 'Frontend Dev', color: '#3B82F6' },
+          { name: 'Backend & API', color: '#10B981' },
+          { name: 'QA & Testing', color: '#F59E0B' },
+          { name: 'DevOps & Deploy', color: '#EC4899' },
         ],
       },
     },
@@ -48,9 +53,10 @@ async function main() {
 
   console.log('✅ Users created: alex@example.com and sarah@example.com (Password: password123)');
 
-  const alexWorkCat = alex.categories.find((c) => c.name === 'Work')!;
-  const alexPersonalCat = alex.categories.find((c) => c.name === 'Personal')!;
-  const alexUrgentCat = alex.categories.find((c) => c.name === 'Urgent')!;
+  const alexUxUiCat = alex.categories.find((c) => c.name === 'UX/UI Design')!;
+  const alexFrontendCat = alex.categories.find((c) => c.name === 'Frontend Dev')!;
+  const alexBackendCat = alex.categories.find((c) => c.name === 'Backend & API')!;
+  const alexDevOpsCat = alex.categories.find((c) => c.name === 'DevOps & Deploy')!;
 
   // 3. สร้าง Task ตัวอย่างให้ Alex
   // งานที่ 1: กำลังทำ + ใกล้ส่ง + แท็ก Sarah
@@ -61,7 +67,7 @@ async function main() {
       status: TaskStatus.IN_PROGRESS,
       priority: Priority.HIGH,
       dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // อีก 2 วันข้างหน้า
-      categoryId: alexWorkCat.id,
+      categoryId: alexUxUiCat.id,
       creatorId: alex.id,
       collaborators: {
         create: [{ userId: sarah.id }], // แท็ก Sarah
@@ -72,12 +78,12 @@ async function main() {
   // งานที่ 2: งานที่เลยกำหนดส่งแล้ว (Overdue Task สำหรับโชว์ Dashboard Alert)
   await prisma.task.create({
     data: {
-      title: 'Submit Monthly Financial Report',
-      description: 'Summary of team expenses and receipts.',
+      title: 'Setup CI/CD Pipeline and Dockerfile',
+      description: 'Automate build and deployment process to cloud.',
       status: TaskStatus.TODO,
       priority: Priority.HIGH,
       dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // ผ่านมาแล้ว 3 วัน (Overdue!)
-      categoryId: alexUrgentCat.id,
+      categoryId: alexDevOpsCat.id,
       creatorId: alex.id,
     },
   });
@@ -90,20 +96,20 @@ async function main() {
       status: TaskStatus.DONE,
       priority: Priority.MEDIUM,
       dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-      categoryId: alexWorkCat.id,
+      categoryId: alexBackendCat.id,
       creatorId: alex.id,
     },
   });
 
-  // งานที่ 4: งานส่วนตัว
+  // งานที่ 4: งานส่วน Frontend
   await prisma.task.create({
     data: {
-      title: 'Buy Groceries & Coffee Beans',
-      description: 'Milk, oats, espresso roast.',
+      title: 'Implement Task Filtering & Due Date Sort',
+      description: 'Add dropdown filters for priority, status and deadline.',
       status: TaskStatus.TODO,
       priority: Priority.LOW,
       dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-      categoryId: alexPersonalCat.id,
+      categoryId: alexFrontendCat.id,
       creatorId: alex.id,
     },
   });

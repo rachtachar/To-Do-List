@@ -23,12 +23,14 @@ export const register = async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         name,
-        // สร้างหมวดหมู่เริ่มต้นให้ผู้ใช้ใหม่ทันที
+        // สร้างหมวดหมู่เฉพาะสายงาน Tech / Software ให้ผู้ใช้ใหม่ทันที
         categories: {
           create: [
-            { name: 'General', color: '#6B7280' },
-            { name: 'Work', color: '#3B82F6' },
-            { name: 'Personal', color: '#10B981' },
+            { name: 'UX/UI Design', color: '#8B5CF6' },
+            { name: 'Frontend Dev', color: '#3B82F6' },
+            { name: 'Backend & API', color: '#10B981' },
+            { name: 'QA & Testing', color: '#F59E0B' },
+            { name: 'DevOps & Deploy', color: '#EC4899' },
           ],
         },
       },
